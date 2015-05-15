@@ -1,1 +1,1 @@
-# career-elite-conpetition
+# career-elite-competition
