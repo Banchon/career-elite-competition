@@ -12,7 +12,7 @@
 int main(int argc, char *argv[])
 {
 	if(argc < 6) {
-		std::cout << "error: incorrect arguments." << std::endl;
+		std::cout << "error: incorrect command line arguments." << std::endl;
 		std::cout << "usage: " << argv[0] <<" serverIP serverPort localIP localPort playerID" << std::endl;
 		return -1;
 	}
