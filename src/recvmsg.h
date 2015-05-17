@@ -5,6 +5,6 @@
 #include <string>
 #include <stdio.h>
 
-int recvmsg(FILE* , std::vector<std::string>);
+int recvmsg(FILE* , std::vector<std::string>&);
 
 #endif

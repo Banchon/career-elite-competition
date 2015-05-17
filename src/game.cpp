@@ -18,16 +18,16 @@ using std::vector;
 int main(int argc, char *argv[])
 {
 	//definition of the message types that game client can receive from gameserver
-	const string SEAT-INFO-MSG = "seat/ \n";
-	const string GAME-OVER-MSG = "game-over \n";
-	const string BLIND-MSG = "blind/ \n";
-	const string HOLD-CARDS-MSG = "hold/ \n";
-	const string INQUIRE-MSG = "inquire/ \n";
-	const string FLOP-MSG = "flop/ \n";
-	const string TURN-MSG = "turn/ \n";
-	const string RIVER-MSG = "river/ \n";
-	const string SHOWDOWN-MSG = "showdown/ \n";
-	const string POT-WIN-MSG = "pot-win/ \n"; 
+	const string SEAT_INFO_MSG = "seat/ \n";
+	const string GAME_OVER_MSG = "game-over \n";
+	const string BLIND_MSG = "blind/ \n";
+	const string HOLD_CARDS_MSG = "hold/ \n";
+	const string INQUIRE_MSG = "inquire/ \n";
+	const string FLOP_MSG = "flop/ \n";
+	const string TURN_MSG = "turn/ \n";
+	const string RIVER_MSG = "river/ \n";
+	const string SHOWDOWN_MSG = "showdown/ \n";
+	const string POT_WIN_MSG = "pot-win/ \n"; 
 	if(argc < 6) {
 		std::cout << "error: incorrect command line arguments." << std::endl;
 		std::cout << "usage: " << argv[0] <<" serverIP serverPort localIP localPort playerID" << std::endl;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 	regmsg.append(argv[5]);
 	regmsg.append(" boo \n");
 
-	::fputs(regmsg.c_str, localSocketFileStream);
+	::fputs(regmsg.c_str(), localSocketFileStream);
 	::fflush(localSocketFileStream);
 
 	while(true) {
@@ -101,25 +101,25 @@ int main(int argc, char *argv[])
 		//get the message type and call the corresponse handle interface. 
 		if(message_ptr -> size() > 0) {
 
-			if((*message_ptr)[0] == SEAT-INFO-MSG)
+			if((*message_ptr)[0] == SEAT_INFO_MSG)
 				seat_info_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == BLIND-MSG)
+			else if((*message_ptr)[0] == BLIND_MSG)
 				blind_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == HOLD-CARDS-MSG)
+			else if((*message_ptr)[0] == HOLD_CARDS_MSG)
 				hold_cards_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == INQUIRE-MSG)
+			else if((*message_ptr)[0] == INQUIRE_MSG)
 				inquire_msg_handle(*message_ptr, localSocketFileStream);  //more argument needed to perform better action.
-			else if((*message_ptr)[0] == FLOP-MSG)
+			else if((*message_ptr)[0] == FLOP_MSG)
 				flop_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == TURN-MSG)
+			else if((*message_ptr)[0] == TURN_MSG)
 				turn_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == RIVER-MSG)
+			else if((*message_ptr)[0] == RIVER_MSG)
 				river_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == SHOWDOWN-MSG)
+			else if((*message_ptr)[0] == SHOWDOWN_MSG)
 				showdown_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == POT-WIN-MSG)
+			else if((*message_ptr)[0] == POT_WIN_MSG)
 				pot_win_msg_handle(*message_ptr);
-			else if ((*message_ptr)[0] == GAME-OVER-MSG) {
+			else if ((*message_ptr)[0] == GAME_OVER_MSG) {
 				game_over_msg_handle(*message_ptr);
 				break;
 			}

@@ -2,6 +2,9 @@
 #include <string>
 #include <stdio.h>
 
+using std::string;
+using std::vector;
+
 int seat_info_msg_handle(std::vector<std::string>& message)
 {
 	return 0;
@@ -24,7 +27,7 @@ int inquire_msg_handle(std::vector<std::string>& message, FILE *localSocketStrea
 
 	const string all_in = "all_in \n";
 	::fputs(all_in.c_str(), localSocketStream);
-	::fflush();
+	::fflush(localSocketStream);
 	return 0;
 }
 
