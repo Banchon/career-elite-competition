@@ -1,10 +1,18 @@
-game : game.o recvmsg.o messagehandle.o
-	g++ -o game game.o recvmsg.o messagehandle.o
+CC = g++
+CXXFLAG =
+LDFLAG =
+OUT = ../target/game
+
+vpath %.cpp ../source
+vpath %.h ../source
+
+$(OUT) : game.o recvmsg.o messagehandle.o
+	$(CC) $(CXXFLAG) -o $(OUT) game.o recvmsg.o messagehandle.o $(LDFLAG)
 game.o : game.cpp recvmsg.h messagehandle.h
-	g++ -c -o game.o game.cpp
+	$(CC) $(CXXFLAG) -c -o game.o ../source/game.cpp
 recvmsg.o : recvmsg.cpp
-	g++ -c -o recvmsg.o recvmsg.cpp
+	$(CC) $(CXXFLAG) -c -o recvmsg.o ../source/recvmsg.cpp
 messagehandle.o : messagehandle.cpp
-	g++ -c -o messagehandle.o messagehandle.cpp
+	$(CC) $(CXXFLAG) -c -o messagehandle.o ../source/messagehandle.cpp
 clean:
-	rm *.o game
+	rm *.o $(OUT)
