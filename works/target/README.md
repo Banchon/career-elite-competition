@@ -1,1 +1,1 @@
-the game file is the excutable object file of the project.
+The target directory is where the excutable object file game reside in.
