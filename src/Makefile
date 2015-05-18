@@ -1,5 +1,5 @@
-testgame : game.o recvmsg.o messagehandle.o
-	g++ -o testgame game.o recvmsg.o messagehandle.o
+game : game.o recvmsg.o messagehandle.o
+	g++ -o game game.o recvmsg.o messagehandle.o
 game.o : game.cpp recvmsg.h messagehandle.h
 	g++ -c -o game.o game.cpp
 recvmsg.o : recvmsg.cpp

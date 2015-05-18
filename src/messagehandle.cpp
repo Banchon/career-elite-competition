@@ -5,24 +5,24 @@
 using std::string;
 using std::vector;
 
-int seat_info_msg_handle(std::vector<std::string>& message)
+int seat_info_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
-int blind_msg_handle(std::vector<std::string>& message)
+int blind_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
-int hold_cards_msg_handle(std::vector<std::string>& message)
+int hold_cards_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
 //more argument needed to perform better action.
 //below are extremely stupid all-in method
-int inquire_msg_handle(std::vector<std::string>& message, FILE *localSocketStream)
+int inquire_msg_handle(vector<string>& message, FILE *localSocketStream)
 {
 
 	const string all_in = "all_in \n";
@@ -31,31 +31,31 @@ int inquire_msg_handle(std::vector<std::string>& message, FILE *localSocketStrea
 	return 0;
 }
 
-int flop_msg_handle(std::vector<std::string>& message)
+int flop_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
-int turn_msg_handle(std::vector<std::string>& message)
+int turn_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
-int river_msg_handle(std::vector<std::string>& message)
+int river_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
-int showdown_msg_handle(std::vector<std::string>& message)
+int showdown_msg_handle(vector<string>& message)
 {
 	return 0;
 }
 
-int pot_win_msg_handle(std::vector<std::string>& message)
+int pot_win_msg_handle(vector<string>& message)
 {
 	return 0;
 }
-int game_over_msg_handle(std::vector<std::string>& message)
+int game_over_msg_handle(vector<string>& message)
 {
 	return 0;
 }
