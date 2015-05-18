@@ -1,2 +1,2 @@
-/src/*.o
-/src/game
+/works/target/game
+/works/makeproject/*.o
