@@ -7,4 +7,4 @@ recvmsg.o : recvmsg.cpp
 messagehandle.o : messagehandle.cpp
 	g++ -c -o messagehandle.o messagehandle.cpp
 clean:
-	rm *.o testgame
+	rm *.o game
