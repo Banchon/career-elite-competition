@@ -28,6 +28,11 @@ int main(int argc, char *argv[])
 	const string RIVER_MSG = "river/ \n";
 	const string SHOWDOWN_MSG = "showdown/ \n";
 	const string POT_WIN_MSG = "pot-win/ \n"; 
+	const string NOTIFY_MSG = "notify/ \n";
+
+	bool tag_notify = false;
+	const string need_notify = "need_notify ";
+	
 	if(argc < 6) {
 		std::cout << "error: incorrect command line arguments." << std::endl;
 		std::cout << "usage: " << argv[0] <<" serverIP serverPort localIP localPort playerID" << std::endl;
@@ -88,45 +93,51 @@ int main(int argc, char *argv[])
 	//registration
 	std::string regmsg("reg: ");
 	regmsg.append(argv[5]);
-	regmsg.append(" boo \n");
+	regmsg.append(" boo ");
+
+	if(tag_notify)
+		regmsg.append(need_notify);
+	
+	regmsg.append("\n");
 
 	::fputs(regmsg.c_str(), localSocketFileStream);
 	::fflush(localSocketFileStream);
 
 	while(true) {
-		vector<string>* message_ptr = new vector<string>;
-		if(recvmsg(localSocketFileStream, *message_ptr) == -1)
+		vector<string> message;
+		if(recvmsg(localSocketFileStream, message) == -1)
 			return -1;
 
 		//get the message type and call the corresponse handle interface. 
-		if(message_ptr -> size() > 0) {
+		if(message.size() > 0) {
 
-			if((*message_ptr)[0] == SEAT_INFO_MSG)
-				seat_info_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == BLIND_MSG)
-				blind_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == HOLD_CARDS_MSG)
-				hold_cards_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == INQUIRE_MSG)
-				inquire_msg_handle(*message_ptr, localSocketFileStream);  //more argument needed to perform better action.
-			else if((*message_ptr)[0] == FLOP_MSG)
-				flop_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == TURN_MSG)
-				turn_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == RIVER_MSG)
-				river_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == SHOWDOWN_MSG)
-				showdown_msg_handle(*message_ptr);
-			else if((*message_ptr)[0] == POT_WIN_MSG)
-				pot_win_msg_handle(*message_ptr);
-			else if ((*message_ptr)[0] == GAME_OVER_MSG) {
-				game_over_msg_handle(*message_ptr);
+			if(message[0] == SEAT_INFO_MSG)
+				seat_info_msg_handle(message);
+			else if(message[0] == BLIND_MSG)
+				blind_msg_handle(message);
+			else if(message[0] == HOLD_CARDS_MSG)
+				hold_cards_msg_handle(message);
+			else if(message[0] == INQUIRE_MSG)
+				inquire_msg_handle(message, localSocketFileStream);  //more argument needed to perform better action.
+			else if(message[0] == FLOP_MSG)
+				flop_msg_handle(message);
+			else if(message[0] == TURN_MSG)
+				turn_msg_handle(message);
+			else if(message[0] == RIVER_MSG)
+				river_msg_handle(message);
+			else if(message[0] == SHOWDOWN_MSG)
+				showdown_msg_handle(message);
+			else if(message[0] == POT_WIN_MSG)
+				pot_win_msg_handle(message);
+			else if(message[0] == NOTIFY_MSG)
+				notify_msg_handle(message);
+			else if (message[0] == GAME_OVER_MSG) {
+				game_over_msg_handle(message);
 				break;
 			}
 			else
-				std::cout << "unknown message type: " << (*message_ptr)[0];
+				std::cout << "unknown message type: " << message[0];
 		}
-		delete message_ptr;		
 	}
 
 	//deallocate the socket resource.

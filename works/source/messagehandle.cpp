@@ -55,7 +55,13 @@ int pot_win_msg_handle(vector<string>& message)
 {
 	return 0;
 }
+
 int game_over_msg_handle(vector<string>& message)
+{
+	return 0;
+}
+
+int notify_msg_handle(vector<string>& message)
 {
 	return 0;
 }

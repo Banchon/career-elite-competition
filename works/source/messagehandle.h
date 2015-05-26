@@ -25,4 +25,6 @@ int pot_win_msg_handle(std::vector<std::string>& message);
 
 int game_over_msg_handle(std::vector<std::string>& message);
 
+int notify_msg_handle(std::vector<std::string>& message);
+
 #endif
