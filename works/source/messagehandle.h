@@ -5,7 +5,7 @@
 #include <string>
 #include <stdio.h>
 
-int seat_info_msg_handle(std::vector<std::string>& message);
+int seat_info_msg_handle(std::vector<std::string>& message, int& seat);
 
 int blind_msg_handle(std::vector<std::string>& message);
 

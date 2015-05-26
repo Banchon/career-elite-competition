@@ -32,7 +32,12 @@ int main(int argc, char *argv[])
 
 	bool tag_notify = false;
 	const string need_notify = "need_notify ";
-	
+
+	int phase = -1;  //0, 1, 2, 3 represent pre-flop, flop, turn, river respectively,  otherwise the phase is -1;
+	int jetton = 0;  //current jetton;
+	int money = 0;   //current money;
+	int seat = -1;    //0 stands for dealer, 1 stands for small blind, 2 stands for big blind .... -1 stands for nothing;
+
 	if(argc < 6) {
 		std::cout << "error: incorrect command line arguments." << std::endl;
 		std::cout << "usage: " << argv[0] <<" serverIP serverPort localIP localPort playerID" << std::endl;
@@ -112,7 +117,7 @@ int main(int argc, char *argv[])
 		if(message.size() > 0) {
 
 			if(message[0] == SEAT_INFO_MSG)
-				seat_info_msg_handle(message);
+				seat_info_msg_handle(message, &seat);
 			else if(message[0] == BLIND_MSG)
 				blind_msg_handle(message);
 			else if(message[0] == HOLD_CARDS_MSG)
