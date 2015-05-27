@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include "cards.h"
 
+#ifdef DEBUG
+#include <iostream>
+using std::cout;
+using std::endl;
+#endif
+
 using std::string;
 using std::vector;
 
@@ -86,11 +92,21 @@ int seat_info_msg_handle(vector<string>& message, BasicInfo& basic_info)
 			string::size_type money_index = jetton_end + 1;
 			string::size_type money_end = message[i].find(" ", money_index);
 
-			string jetton = message[i].substr(jetton_index, jetton_end);
-			string money = message[i].substr(money_index, money_end);
+			string jetton = message[i].substr(jetton_index, jetton_end - jetton_index);
+			string money = message[i].substr(money_index, money_end - money_index);
 
 			basic_info.jetton = std::stoi(jetton);
 			basic_info.money = std::stoi(money);
+#ifdef DEBUG
+			cout << "-----new hand-----" << endl;
+			cout << "total players: " << basic_info.total_player << endl;
+			cout << "jetton: " << basic_info.jetton << endl;
+			cout << "money: " << basic_info.money << endl;
+			cout << jetton << ":jetton.length(): " << jetton.length() << endl;
+			cout << money << ":money.length(): " << money.length() << endl;
+			cout << "------------------" << endl;
+#endif
+
 			return 0;
 		}		
 	}
@@ -120,11 +136,11 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string::size_type point_1_end = message[1].find(" ", point_1_index);
 	string::size_type point_2_end = message[2].find(" ", point_2_index);
 
-	string color_1 = message[1].substr(0, color_1_end);
-	string point_1 = message[1].substr(point_1_index, point_1_end);
+	string color_1 = message[1].substr(0, color_1_end - 0);
+	string point_1 = message[1].substr(point_1_index, point_1_end - point_1_index);
 
-	string color_2 = message[2].substr(0, color_2_end);
-	string point_2 = message[2].substr(point_2_index, point_2_end);
+	string color_2 = message[2].substr(0, color_2_end - 0);
+	string point_2 = message[2].substr(point_2_index, point_2_end - point_2_index);
 
 	basic_info.hold_cards[0][0] = str_to_color(color_1);
 	basic_info.hold_cards[1][0] = str_to_color(color_2);
@@ -133,6 +149,17 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basic_info)
 
 	basic_info.hold_cards_value = billChenValue(basic_info.hold_cards);
 
+#ifdef DEBUG
+	cout << "original hand cards: " << endl;
+	cout << color_1 << " " << point_1 << " " << point_1.length() << endl;
+	cout << color_2 << " " << point_2 << " " << point_2.length() << endl;
+	cout << "hand cards after processed: " << endl;
+	cout << "-----hold_cards_msg_handle-----" << endl;
+	cout << basic_info.hold_cards[0][0] << " " << basic_info.hold_cards[0][1] << endl;
+	cout << basic_info.hold_cards[1][0] << " " << basic_info.hold_cards[1][1] << endl;
+	cout << "hold_cards_value: " << basic_info.hold_cards_value << endl;
+	cout << "-------------------------------" << endl;
+#endif
 	return 0;
 }
 
@@ -204,14 +231,14 @@ int flop_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string::size_type point_2_end = message[2].find(" ", point_2_index);
 	string::size_type point_3_end = message[3].find(" ", point_3_index);
 
-	string color_1 = message[1].substr(0, color_1_end);
-	string point_1 = message[1].substr(point_1_index, point_1_end);
+	string color_1 = message[1].substr(0, color_1_end - 0);
+	string point_1 = message[1].substr(point_1_index, point_1_end - point_1_index);
 
-	string color_2 = message[2].substr(0, color_2_end);
-	string point_2 = message[2].substr(point_2_index, point_2_end);
+	string color_2 = message[2].substr(0, color_2_end - 0);
+	string point_2 = message[2].substr(point_2_index, point_2_end - point_2_index);
 
-	string color_3 = message[3].substr(0, color_3_end);
-	string point_3 = message[3].substr(point_3_index, point_3_end);
+	string color_3 = message[3].substr(0, color_3_end - 0);
+	string point_3 = message[3].substr(point_3_index, point_3_end - point_3_index);
 
 	basic_info.flop_cards[0][0] = str_to_color(color_1);
 	basic_info.flop_cards[1][0] = str_to_color(color_2);
@@ -233,8 +260,8 @@ int turn_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string::size_type point_1_index = color_1_end + 1;
 	string::size_type point_1_end = message[1].find(" ", point_1_index);
 
-	string color_1 = message[1].substr(0, color_1_end);
-	string point_1 = message[1].substr(point_1_index, point_1_end);
+	string color_1 = message[1].substr(0, color_1_end - 0);
+	string point_1 = message[1].substr(point_1_index, point_1_end - point_1_index);
 
 	basic_info.turn_cards[0] = str_to_color(color_1);
 	basic_info.turn_cards[1] = str_to_point(point_1);
@@ -251,8 +278,8 @@ int river_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string::size_type point_1_index = color_1_end + 1;
 	string::size_type point_1_end = message[1].find(" ", point_1_index);
 
-	string color_1 = message[1].substr(0, color_1_end);
-	string point_1 = message[1].substr(point_1_index, point_1_end);
+	string color_1 = message[1].substr(0, color_1_end - 0);
+	string point_1 = message[1].substr(point_1_index, point_1_end - point_1_index);
 
 	basic_info.river_cards[0] = str_to_color(color_1);
 	basic_info.river_cards[1] = str_to_point(point_1);
