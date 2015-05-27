@@ -150,11 +150,11 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	basic_info.hold_cards_value = billChenValue(basic_info.hold_cards);
 
 #ifdef DEBUG
+	cout << "-----hold_cards_msg_handle-----" << endl;
 	cout << "original hand cards: " << endl;
 	cout << color_1 << " " << point_1 << " " << point_1.length() << endl;
 	cout << color_2 << " " << point_2 << " " << point_2.length() << endl;
 	cout << "hand cards after processed: " << endl;
-	cout << "-----hold_cards_msg_handle-----" << endl;
 	cout << basic_info.hold_cards[0][0] << " " << basic_info.hold_cards[0][1] << endl;
 	cout << basic_info.hold_cards[1][0] << " " << basic_info.hold_cards[1][1] << endl;
 	cout << "hold_cards_value: " << basic_info.hold_cards_value << endl;
