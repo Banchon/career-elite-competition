@@ -1,6 +1,8 @@
 #ifndef CARDS_H
 #define CARDS_H
 
+#include <string>
+
 enum Point {
 	_2 = 2;
 	_3 = 3;
@@ -26,11 +28,20 @@ enum Color {
 
 typedef struct BasicInfo {
 	string pid;
+	int action_state; //-1 not in a game, 0 normal, 1 all-in, 2 fold. 
 	int phase;  //0, 1, 2, 3 represent pre-flop, flop, turn, river respectively,  otherwise the phase is -1;
 	int jetton;  //current jetton;
 	int money;   //current money;
 	int seat;    //0 stands for button, 1 stands for small blind, 2 stands for big blind .... -1 stands for nothing;
+	int total_player;
 	int hold_cards[2][2];
+	int flop_cards[3][2];
+	int turn_cards[2];
+	int river_cards[2];
+	double hold_cards_value;
 }BasicInfo;
+
+int str_to_color(const std::string color);
+int str_to_point(const std::string point);
 
 #endif

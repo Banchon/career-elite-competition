@@ -107,13 +107,17 @@ int main(int argc, char *argv[])
 	//initialize the basic information;
 	BasicInfo basic_info;
 	basic_info.pid = argv[5];
+	basic_info.action_state = -1;
 	basic_info.phase = -1;
 	basic_info.jetton = 0;
 	basic_info.money = 0;
 	basic_info.seat = -1;
-	for(int i = 0; i < 2; i++)
+	basic_info.total_player = 0;
+	for(int i = 0; i < 2; i++) {
 		for(int j = 0; j < 2; j++)
 			basic_info.hold_cards[i][j] = -1;
+	}
+	basic_info.hold_cards_value = 0.0;
 
 	while(true) {
 		vector<string> message;
@@ -126,23 +130,23 @@ int main(int argc, char *argv[])
 			if(message[0] == SEAT_INFO_MSG)
 				seat_info_msg_handle(message, basic_info);
 			else if(message[0] == BLIND_MSG)
-				blind_msg_handle(message);
+				blind_msg_handle(message, basic_info);
 			else if(message[0] == HOLD_CARDS_MSG)
-				hold_cards_msg_handle(message);
+				hold_cards_msg_handle(message, basic_info);
 			else if(message[0] == INQUIRE_MSG)
-				inquire_msg_handle(message, localSocketFileStream);  //more argument needed to perform better action.
+				inquire_msg_handle(message, basic_info, localSocketFileStream);  //more argument needed to perform better action.
 			else if(message[0] == FLOP_MSG)
-				flop_msg_handle(message);
+				flop_msg_handle(message, basic_info);
 			else if(message[0] == TURN_MSG)
-				turn_msg_handle(message);
+				turn_msg_handle(message, basic_info);
 			else if(message[0] == RIVER_MSG)
-				river_msg_handle(message);
+				river_msg_handle(message, basic_info);
 			else if(message[0] == SHOWDOWN_MSG)
-				showdown_msg_handle(message);
+				showdown_msg_handle(message, basic_info);
 			else if(message[0] == POT_WIN_MSG)
-				pot_win_msg_handle(message);
+				pot_win_msg_handle(message, basic_info);
 			else if(message[0] == NOTIFY_MSG)
-				notify_msg_handle(message);
+				notify_msg_handle(message, basic_info);
 			else if (message[0] == GAME_OVER_MSG) {
 				game_over_msg_handle(message);
 				break;
