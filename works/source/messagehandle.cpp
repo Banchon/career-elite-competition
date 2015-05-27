@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
+#include "cards.h"
 
 using std::string;
 using std::vector;
@@ -17,14 +18,18 @@ string find_msg_line_of_pid(const vector<string>& message, const string pid)
 	return "";
 }
 
-int seat_info_msg_handle(vector<string>& message, const string pid; int& seat)
+int seat_info_msg_handle(vector<string>& message, BasicInfo& basic_info)
 {
+	string pid = basic_info.pid;
+
 	for(vector<string>::size_type i = 0; i < message.size(); i++) {
+		
 		string::size_type pid_index = message[i].find(pid);
 
 		if(pid_index != string::npos && ( pid_index == message[i].find(":") + 2) 
-			|| pid_index == 0))
-			seat = i - 1;
+			|| pid_index == 0)) {
+			basic_info.seat = i - 1;
+			
 	}
 	return 0;
 }

@@ -10,6 +10,7 @@
 #include <string>
 #include "recvmsg.h"
 #include "messagehandle.h"
+#include "cards.h"
 
 using std::string;
 using std::vector;
@@ -32,11 +33,6 @@ int main(int argc, char *argv[])
 
 	bool tag_notify = false;
 	const string need_notify = "need_notify ";
-
-	int phase = -1;  //0, 1, 2, 3 represent pre-flop, flop, turn, river respectively,  otherwise the phase is -1;
-	int jetton = 0;  //current jetton;
-	int money = 0;   //current money;
-	int seat = -1;    //0 stands for dealer, 1 stands for small blind, 2 stands for big blind .... -1 stands for nothing;
 
 	if(argc < 6) {
 		std::cout << "error: incorrect command line arguments." << std::endl;
@@ -108,6 +104,17 @@ int main(int argc, char *argv[])
 	::fputs(regmsg.c_str(), localSocketFileStream);
 	::fflush(localSocketFileStream);
 
+	//initialize the basic information;
+	BasicInfo basic_info;
+	basic_info.pid = argv[5];
+	basic_info.phase = -1;
+	basic_info.jetton = 0;
+	basic_info.money = 0;
+	basic_info.seat = -1;
+	for(int i = 0; i < 2; i++)
+		for(int j = 0; j < 2; j++)
+			basic_info.hold_cards[i][j] = -1;
+
 	while(true) {
 		vector<string> message;
 		if(recvmsg(localSocketFileStream, message) == -1)
@@ -117,7 +124,7 @@ int main(int argc, char *argv[])
 		if(message.size() > 0) {
 
 			if(message[0] == SEAT_INFO_MSG)
-				seat_info_msg_handle(message, &seat);
+				seat_info_msg_handle(message, basic_info);
 			else if(message[0] == BLIND_MSG)
 				blind_msg_handle(message);
 			else if(message[0] == HOLD_CARDS_MSG)
