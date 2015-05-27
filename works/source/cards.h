@@ -4,30 +4,30 @@
 #include <string>
 
 enum Point {
-	_2 = 2;
-	_3 = 3;
-	_4 = 4;
-	_5 = 5;
-	_6 = 6;
-	_7 = 7;
-	_8 = 8;
-	_9 = 9;
-	_10 = 10;
-	_J = 11;
-	_Q = 12;
-	_K = 13;
-	_A = 14; 
+	_2 = 2,
+	_3 = 3,
+	_4 = 4,
+	_5 = 5,
+	_6 = 6,
+	_7 = 7,
+	_8 = 8,
+	_9 = 9,
+	_10 = 10,
+	_J = 11,
+	_Q = 12,
+	_K = 13,
+	_A = 14 
 };
 
 enum Color {
-	SPADES = 0;
-	HEARTS = 1;
-	CLUBS = 2;
-	DIAMONDS = 3;
+	SPADES = 0,
+	HEARTS = 1,
+	CLUBS = 2,
+	DIAMONDS = 3
 };
 
 typedef struct BasicInfo {
-	string pid;
+	std::string pid;
 	int action_state; //-1 not in a game, 0 normal, 1 all-in, 2 fold. 
 	int phase;  //0, 1, 2, 3 represent pre-flop, flop, turn, river respectively,  otherwise the phase is -1;
 	int jetton;  //current jetton;

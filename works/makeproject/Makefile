@@ -1,5 +1,5 @@
 CC = g++
-CXXFLAG =
+CXXFLAG = -std=c++0x
 LDFLAG =
 OUT = ../target/game
 

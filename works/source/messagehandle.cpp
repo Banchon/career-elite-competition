@@ -6,7 +6,7 @@
 using std::string;
 using std::vector;
 
-double billChenValue(int hold_cards[][])
+double billChenValue(int hold_cards[][2])
 {
 	double value = 0.0;
 
@@ -233,8 +233,8 @@ int turn_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string::size_type point_1_index = color_1_end + 1;
 	string::size_type point_1_end = message[1].find(" ", point_1_index);
 
-	string color_1 = message.substr(0, color_1_end);
-	string point_1 = message.substr(point_1_index, point_1_end);
+	string color_1 = message[1].substr(0, color_1_end);
+	string point_1 = message[1].substr(point_1_index, point_1_end);
 
 	basic_info.turn_cards[0] = str_to_color(color_1);
 	basic_info.turn_cards[1] = str_to_point(point_1);
@@ -251,8 +251,8 @@ int river_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string::size_type point_1_index = color_1_end + 1;
 	string::size_type point_1_end = message[1].find(" ", point_1_index);
 
-	string color_1 = message.substr(0, color_1_end);
-	string point_1 = message.substr(point_1_index, point_1_end);
+	string color_1 = message[1].substr(0, color_1_end);
+	string point_1 = message[1].substr(point_1_index, point_1_end);
 
 	basic_info.river_cards[0] = str_to_color(color_1);
 	basic_info.river_cards[1] = str_to_point(point_1);
