@@ -26,6 +26,19 @@ enum Color {
 	DIAMONDS = 3
 };
 
+enum HandPowerType {
+	HIGH_CARD = 1,
+	ONE_PAIR = 2,
+	TWO_PAIR = 3,
+	THREE_OF_A_KIND = 4,
+	STRAIGHT = 5,
+	FLUSH = 6,
+	FULL_HOUSE = 7,
+	FOUR_OF_A_KIND = 8,
+	STRAIGHT_FLUSH = 9
+};
+
+
 typedef struct BasicInfo {
 	std::string pid;
 	int action_state; //-1 not in a game, 0 normal, 1 all-in, 2 fold. 
