@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
-#include "cards.h"
+#include "texasHoldem.h"
 
 int seat_info_msg_handle(std::vector<std::string>& message, BasicInfo& basic_info);
 

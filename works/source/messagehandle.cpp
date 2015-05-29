@@ -1,7 +1,9 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
-#include "cards.h"
+#include "texasHoldem.h"
+#include "Card.h"
+#include <map>
 
 #ifdef DEBUG
 #include <iostream>
@@ -11,6 +13,11 @@ using std::endl;
 
 using std::string;
 using std::vector;
+using std::map;
+
+int freshPlayersState(vector<string>& message, map<string, Action>& playerStates) {
+	//fresh the players state.
+}
 
 double billChenValue(int hold_cards[][2])
 {

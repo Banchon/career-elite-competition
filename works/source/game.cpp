@@ -10,7 +10,8 @@
 #include <string>
 #include "recvmsg.h"
 #include "messagehandle.h"
-#include "cards.h"
+#include "Card.h"
+#include "texasHoldem.h"
 
 using std::string;
 using std::vector;

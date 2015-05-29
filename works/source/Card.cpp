@@ -1,9 +1,9 @@
-#include "cards.h"
+#include "Card.h"
 #include <string>
 
 using std::string;
 
-int str_to_color(const string color)
+Color str_to_color(const string color)
 {
 	if(color == "SPADES")
 		return SPADES;
@@ -14,11 +14,11 @@ int str_to_color(const string color)
 	else if(color == "DIAMONDS")
 		return DIAMONDS;
 	else
-		return -1;
+		return NULLCOLOR;
 }
 
 
-int str_to_point(const string point)
+Point str_to_point(const string point)
 {
 	if(point == "2")
 		return _2;
@@ -47,5 +47,5 @@ int str_to_point(const string point)
 	else if(point == "A")
 		return _A;
 	else 
-		return -1;
+		return NULLPOINT;
 }
