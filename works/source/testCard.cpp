@@ -26,5 +26,10 @@ int main()
 	cout << "card2: " << card2.getColor() << " " << card2.getPoint() << endl;
 	cout << "card1.compareTo(card2): " << card1.compareTo(card2) << endl;
 
+	cout << "card1 == card2: " << std::boolalpha << (card1 == card2) << endl;
+	
+	Card card3(card1.getColor(), card1.getPoint());
+	cout << "card1 == card3: " << (card1 == card3) << endl;
+
 	return 0;
 }

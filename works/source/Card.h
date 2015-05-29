@@ -62,5 +62,9 @@ class Card {
 		{
 			return point;
 		}
+
+		bool operator==(Card other) {
+			return equals(other);
+		}
 };
 #endif
