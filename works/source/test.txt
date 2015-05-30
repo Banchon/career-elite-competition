@@ -1,0 +1,27 @@
+HandPowerType: 9
+tieBreakingInformation: 14 
+
+HandPowerType: 8
+tieBreakingInformation: 9 13 
+
+HandPowerType: 7
+tieBreakingInformation: 11 10 
+
+HandPowerType: 6
+tieBreakingInformation: 13 11 10 8 7 
+
+HandPowerType: 5
+tieBreakingInformation: 11 
+
+HandPowerType: 4
+tieBreakingInformation: 12 14 10 
+
+HandPowerType: 3
+tieBreakingInformation: 13 12 10 
+
+HandPowerType: 2
+tieBreakingInformation: 13 14 10 9 
+
+HandPowerType: 1
+tieBreakingInformation: 14 13 10 9 8 
+

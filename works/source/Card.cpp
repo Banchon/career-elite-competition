@@ -49,3 +49,11 @@ Point str_to_point(const string point)
 	else 
 		return NULLPOINT;
 }
+
+bool operator<(Card card1, Card card2)
+{
+	int point1 = card1.point;
+	int point2 = card2.point;
+
+	return point1 < point2;
+}

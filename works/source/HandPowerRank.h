@@ -5,6 +5,6 @@
 #include <vector>
 #include "Card.h"
 
-HandPower HandPoweRank(std::vector<Card>& cards);
+HandPower HandPowerRank(std::vector<Card> cards);
 
 #endif

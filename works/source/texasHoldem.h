@@ -22,7 +22,7 @@ enum Action {
 	CALL = 3,
 	RAISE = 4,
 	ALL_IN = 5
-}
+};
 	
 
 

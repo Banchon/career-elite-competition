@@ -32,6 +32,9 @@ Color str_to_color(const std::string color);
 Point str_to_point(const std::string point);
 
 class Card {
+
+	friend bool operator<(Card card1, Card card2);
+
 	private:
 		Color color;
 		Point point;
@@ -68,9 +71,11 @@ class Card {
 			return equals(other);
 		}
 
-		bool operator<(Card other) 
+/*		bool operator<(Card other) 
 		{
 			return point < other.point;
 		}
+*/
+
 };
 #endif
