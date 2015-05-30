@@ -2,9 +2,8 @@
 #define DECK_H
 
 #include "Card.h"
-#include <algorithm>
 #include <random>
-#include <chrono>
+#include <algorithm>
 #include <vector>
 
 class Deck {
@@ -24,10 +23,6 @@ class Deck {
 					cards.push_back(card);
 				}
 			}
-
-		//	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-		//	std::shuffle(cards.begin(), cards.end(), std::default_random_engine(seed));
-	//		std::random_shuffle(cards.begin(), cards.end());
 		}
 
 		std::vector<Card> getCards()

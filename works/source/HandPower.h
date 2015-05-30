@@ -1,8 +1,9 @@
 #ifndef HANDPOWER_H
 #define HANDPOWER_H
 
-#include "cards.h"
+#include "Card.h"
 #include <vector>
+#include "texasHoldem.h"
 //#include <algorithm>
 
 
@@ -33,7 +34,7 @@ public:
 		int typeDifference = handPowerType - other.handPowerType;
 
 		if(typeDifference == 0) {
-			for(int i = 0; i < tieBreakingInformation.size(); i++) {
+			for(std::vector<Point>::size_type i = 0; i < tieBreakingInformation.size(); i++) {
 				int tieDifference = tieBreakingInformation[i] - other.tieBreakingInformation[i];
 				if(tieDifference != 0)
 					return tieDifference;
