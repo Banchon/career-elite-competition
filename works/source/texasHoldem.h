@@ -15,6 +15,12 @@ enum HandPowerType {
 	STRAIGHT_FLUSH = 9
 };
 
+enum BettingDecision {
+	FOLD_DECISION = 0,
+	CALL_DECISION = 1,
+	RAISE_DECISION = 2,
+};
+
 enum Action {
 	FOLD = 0,
 	BLIND = 1,

@@ -1,0 +1,54 @@
+num / den : 1
+first p: 1
+numberOfPlayers: 8
+second p: 1.4
+BettingDecision: RAISE_DECISION
+
+num / den : 1
+first p: 1
+numberOfPlayers: 8
+second p: 1.4
+BettingDecision: RAISE_DECISION
+
+num / den : 0.99899
+first p: 0.991948
+numberOfPlayers: 8
+second p: 1.38873
+BettingDecision: RAISE_DECISION
+
+num / den : 0.883838
+first p: 0.372377
+numberOfPlayers: 8
+second p: 0.521328
+BettingDecision: CALL_DECISION
+
+num / den : 0.930435
+first p: 0.561678
+numberOfPlayers: 8
+second p: 0.786349
+BettingDecision: RAISE_DECISION
+
+num / den : 0.948485
+first p: 0.655003
+numberOfPlayers: 8
+second p: 0.917004
+BettingDecision: RAISE_DECISION
+
+num / den : 0.810606
+first p: 0.186414
+numberOfPlayers: 8
+second p: 0.26098
+BettingDecision: FOLD_DECISION
+
+num / den : 0.75404
+first p: 0.10451
+numberOfPlayers: 8
+second p: 0.146314
+BettingDecision: FOLD_DECISION
+
+num / den : 0.295455
+first p: 5.80665e-05
+numberOfPlayers: 8
+second p: 8.12931e-05
+BettingDecision: FOLD_DECISION
+
