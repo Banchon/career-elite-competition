@@ -60,17 +60,17 @@ int freshLastPlayersAction(vector<string>& inquireMessage, map<string, Action>& 
 		strAction = inquireMessage[i].substr(strAction_index, strAction_end - strAction_index);
 
 		Action action;
-		if(strAction == "FOLD")
+		if(strAction == "fold")
 			action = FOLD;
-		else if(strAction == "BLIND")
+		else if(strAction == "blind")
 			action = BLIND;
-		else if(strAction == "CHECK")
+		else if(strAction == "check")
 			action = CHECK;
-		else if(strAction == "CALL")
+		else if(strAction == "call")
 			action = CALL;
-		else if(strAction  == "RAISE")
+		else if(strAction  == "raise")
 			action = RAISE;
-		else if(strAction == "ALL_IN")
+		else if(strAction == "all_in")
 			action = ALL_IN;
 		else
 			action = NULLACTION;
@@ -133,7 +133,7 @@ int seat_info_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 
 		string::size_type colon_index = message[i].find(":");
 		if(colon_index != string::npos)
-			pid_index = colon_index + 1;
+			pid_index = colon_index + 2;
 
 		string::size_type pid_end = message[i].find(" ", pid_index);
 		pid = message[i].substr(pid_index, pid_end - pid_index);
@@ -180,7 +180,7 @@ int blind_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 		string::size_type blind_index = message[i].find(" ") + 1;
 		string::size_type blind_end = message[i].find(" ", blind_index);
 
-		blind = message[i].substr(blind_index, blind_end - blind_end);
+		blind = message[i].substr(blind_index, blind_end - blind_index);
 
 		int blindBet = std::stoi(blind);
 		if(basicInfo.leastRaiseJetton < blindBet)
@@ -221,7 +221,7 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 	for(int i = 0; i < 2; i++) {
 		(basicInfo.holeCards[i]).print();
 	}
-	cout << "billChenValue: " << basicInfo.billChenValue;
+	cout << "billChenValue: " << basicInfo.billChenValue << endl;
 #endif	
 	return 0;
 }
@@ -230,6 +230,7 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 {
 
 	freshLastPlayersAction(message, basicInfo.lastPlayersAction);
+
 	map<string, Action>::iterator it = (basicInfo.lastPlayersAction).find(basicInfo.pid);
 	if(it != (basicInfo.lastPlayersAction).end())
 		basicInfo.lastSelfAction = it->second;
