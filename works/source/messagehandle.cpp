@@ -81,6 +81,45 @@ int freshLastPlayersAction(vector<string>& inquireMessage, map<string, Action>& 
 	return 0;
 }
 
+int getLastRoundBetIncrement(vector<string>& inquireMessage, const string selfpid)
+{
+	int lastSelfBet = 0;
+	
+	//find biggestBet
+	int biggestBet = 0;
+
+	for(vector<string>::size_type i = 1; i < (inquireMessage.size() - 2); i++) {
+		string bet;
+		//find the bet index
+		string::size_type bet_index = 0;
+		for(int j = 0; j < 3; j++)
+			bet_index = inquireMessage[i].find(" ", bet_index) + 1;
+		//find the bet end
+		string::size_type bet_end = inquireMessage[i].find(" ", bet_index);
+
+		bet = inquireMessage[i].substr(bet_index, bet_end - bet_index);
+
+		int betNum = std::stoi(bet);
+
+		if(i == (inquireMessage.size() -3))
+			lastSelfBet = betNum;
+				
+		if(betNum > biggestBet)
+			biggestBet = betNum;
+	}
+
+	string pid;
+	string::size_type pid_index = 0;
+	string::size_type pid_end = inquireMessage[inquireMessage.size() - 3].find(" ");
+	pid = inquireMessage[inquireMessage.size() - 3].substr(pid_index, pid_end - pid_index);
+
+	if(pid == selfpid)
+		return (biggestBet - lastSelfBet);
+	else
+		return biggestBet;
+}
+	
+
 int getCurrentPlayerNum(map<string, Action>& lastPlayersAction) 
 {
 	int currentPlayerNum = 0;
@@ -244,19 +283,22 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 	
 	//send a message when last action is neither ALL_IN or FOLD
 	if((basicInfo.lastSelfAction != ALL_IN)  && (basicInfo.lastSelfAction != FOLD)) {
+
+		int lastRoundBetIncrement = getLastRoundBetIncrement(message, basicInfo.pid);
+		int currentPlayerNum = getCurrentPlayerNum(basicInfo.lastPlayersAction);
+		int raisePlayerNum = getRaisePlayerNum(basicInfo.lastPlayersAction);
+		bool isRiverRound = (basicInfo.currentBettingRound == RIVER);
+		
 		BettingDecision bettingDecision;
 		
 		//pre_flop decision
 		if(basicInfo.currentBettingRound == PRE_FLOP)
-			bettingDecision = decidePreFlop(basicInfo.billChenValue, basicInfo.lastSelfAction);
+			bettingDecision = decidePreFlop(basicInfo.billChenValue, currentPlayerNum, lastRoundBetIncrement);
 		
 		//After flop decision
 		else {
 			
-			int currentPlayerNum = getCurrentPlayerNum(basicInfo.lastPlayersAction);
-			int raisePlayerNum = getRaisePlayerNum(basicInfo.lastPlayersAction);
-			bool isRiverRound = (basicInfo.currentBettingRound == RIVER);
-			bettingDecision = decideAfterFlop(basicInfo.handStrength, currentPlayerNum, raisePlayerNum, isRiverRound);
+			bettingDecision = decideAfterFlop(basicInfo.handStrength, currentPlayerNum, raisePlayerNum, lastRoundBetIncrement, isRiverRound);
 		}
 		
 		string sMessage;
