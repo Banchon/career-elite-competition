@@ -6,15 +6,25 @@ OUT = ../target/game
 vpath %.cpp ../source
 vpath %.h ../source
 
-$(OUT) : game.o recvmsg.o messagehandle.o cards.o
-	$(CC) $(CXXFLAG) -o $(OUT) game.o recvmsg.o messagehandle.o cards.o $(LDFLAG)
-game.o : game.cpp recvmsg.h messagehandle.h cards.h
+OBJS = game.o recvmsg.o messagehandle.o Card.o decision.o billChenValueEvaluator.o HandStrengthEvaluator.o HandPowerRank.o
+
+$(OUT) : $(OBJS)
+	$(CC) $(CXXFLAG) -o $(OUT) $(OBJS) $(LDFLAG)
+game.o : game.cpp recvmsg.h messagehandle.h Card.h texasHoldem.h
 	$(CC) $(CXXFLAG) -c -o game.o ../source/game.cpp
-cards.o : cards.cpp cards.h
-	$(CC) $(CXXFLAG) -c -o cards.o ../source/cards.cpp
+Card.o : Card.h Card.cpp
+	$(CC) $(CXXFLAG) -c -o Card.o ../source/Card.cpp
 recvmsg.o : recvmsg.cpp
 	$(CC) $(CXXFLAG) -c -o recvmsg.o ../source/recvmsg.cpp
-messagehandle.o : messagehandle.cpp cards.h
+messagehandle.o : messagehandle.cpp texasHoldem.h Card.h billChenValueEvaluator.h HandStrengthEvaluator.h decision.h
 	$(CC) $(CXXFLAG) -c -o messagehandle.o ../source/messagehandle.cpp
+decision.o : decision.cpp decision.h texasHoldem.h
+	$(CC) $(CXXFLAG) -c -o decision.o ../source/decision.cpp
+billChenValueEvaluator.o : billChenValueEvaluator.cpp billChenValueEvaluator.h Card.h
+	$(CC) $(CXXFLAG) -c -o billChenValueEvaluator.o ../source/billChenValueEvaluator.cpp
+HandStrengthEvaluator.o : HandStrengthEvaluator.cpp HandStrengthEvaluator.h Card.h Deck.h texasHoldem.h HandPower.h HandPowerRank.h
+	$(CC) $(CXXFLAG) -c -o HandStrengthEvaluator.o ../source/HandStrengthEvaluator.cpp
+HandPowerRank.o : HandPowerRank.cpp HandPowerRank.h HandPower.h Card.h texasHoldem.h
+	$(CC) $(CXXFLAG) -c -o HandPowerRank.o ../source/HandPowerRank.cpp
 clean:
 	rm *.o $(OUT)

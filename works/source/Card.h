@@ -2,6 +2,7 @@
 #define CARD_H
 
 #include <string>
+#include <iostream>
 
 enum Point {
 	NULLPOINT = 0,
@@ -74,6 +75,11 @@ class Card {
 		bool operator==(Card other) 
 		{
 			return equals(other);
+		}
+
+		void print()
+		{
+			std::cout << color << " " << point << std::endl;
 		}
 
 /*		bool operator<(Card other) 

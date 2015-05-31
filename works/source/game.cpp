@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 			else if(message[0] == HOLD_CARDS_MSG)
 				hold_cards_msg_handle(message, basicInfo);
 			else if(message[0] == INQUIRE_MSG)
-				inquire_msg_handle(message, basicInfo, localSocketFileStream);  //more argument needed to perform better action.
+				inquire_msg_handle(message, basicInfo, localSocketFileStream);
 			else if(message[0] == FLOP_MSG)
 				flop_msg_handle(message, basicInfo);
 			else if(message[0] == TURN_MSG)

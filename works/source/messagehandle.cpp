@@ -18,6 +18,33 @@ using std::string;
 using std::vector;
 using std::map;
 
+#ifdef DEBUG
+int printMessage(vector<string>& message)
+{
+	for(vector<string>::iterator it = message.begin(); it != message.end(); it++)
+	{
+		cout << *it;
+	}
+
+	return 0;
+}
+
+int printLastPlayersAction(map<string, Action>& lastPlayersAction)
+{
+	for(map<string, Action>::iterator it = lastPlayersAction.begin(); it != lastPlayersAction.end(); it++) {
+		cout << (it->first) << " " << (it->second) << endl;
+	}
+
+	return 0;
+}
+
+int printHandStrength(HandStrength hs)
+{
+	cout << hs.wins << " " << hs.losses << " " << hs.ties << endl;
+	return 0;
+}
+#endif
+
 int freshLastPlayersAction(vector<string>& inquireMessage, map<string, Action>& lastPlayersAction) 
 {
 	//fresh the players state.
@@ -132,13 +159,15 @@ int seat_info_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 	}
 
 #ifdef DEBUG
-		cout << "-----new hand-----" << endl;
-		cout << "total players: " << basicInfo.total_player << endl;
+		cout << endl;
+		cout << endl;
+		cout << "---------------------new hand----------------------" << endl;
+		printMessage(message);
+		cout << "seat_info_msg_handle: " << endl;
+		printLastPlayersAction(basicInfo.lastPlayersAction);
+		cout << "seat: " << basicInfo.seat << endl;
 		cout << "jetton: " << basicInfo.jetton << endl;
 		cout << "money: " << basicInfo.money << endl;
-		cout << jetton << ":jetton.length(): " << jetton.length() << endl;
-		cout << money << ":money.length(): " << money.length() << endl;
-		cout << "------------------" << endl;
 #endif
 		return 0;
 }
@@ -157,6 +186,11 @@ int blind_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 		if(basicInfo.leastRaiseJetton < blindBet)
 			basicInfo.leastRaiseJetton = blindBet;
 	}
+#ifdef DEBUG
+	printMessage(message);
+	cout << "blind_msg_handle: " << endl;
+	cout << "leastRaiseJetton: " << basicInfo.leastRaiseJetton << endl;
+#endif
 	return 0;
 }
 
@@ -182,16 +216,13 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 	basicInfo.billChenValue = billChenValueEvaluator(basicInfo.holeCards);
 
 #ifdef DEBUG
-	cout << "-----hold_cards_msg_handle-----" << endl;
-	cout << "original hand cards: " << endl;
-	cout << color_1 << " " << point_1 << " " << point_1.length() << endl;
-	cout << color_2 << " " << point_2 << " " << point_2.length() << endl;
-	cout << "hand cards after processed: " << endl;
-	cout << basicInfo.hold_cards[0][0] << " " << basicInfo.hold_cards[0][1] << endl;
-	cout << basicInfo.hold_cards[1][0] << " " << basicInfo.hold_cards[1][1] << endl;
-	cout << "hold_cards_value: " << basicInfo.hold_cards_value << endl;
-	cout << "-------------------------------" << endl;
-#endif
+	printMessage(message);
+	cout << "hold_cards_msg_handle: " << endl;
+	for(int i = 0; i < 2; i++) {
+		(basicInfo.holeCards[i]).print();
+	}
+	cout << "billChenValue: " << basicInfo.billChenValue;
+#endif	
 	return 0;
 }
 
@@ -203,6 +234,13 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 	if(it != (basicInfo.lastPlayersAction).end())
 		basicInfo.lastSelfAction = it->second;
 
+#ifdef DEBUG
+	printMessage(message);
+	cout << "inquire_msg_handle: " << endl;
+	printLastPlayersAction(basicInfo.lastPlayersAction);
+	cout << "lastSelfAction: " << basicInfo.lastSelfAction << endl;	
+#endif
+	
 	//send a message when last action is neither ALL_IN or FOLD
 	if((basicInfo.lastSelfAction != ALL_IN)  && (basicInfo.lastSelfAction != FOLD)) {
 		BettingDecision bettingDecision;
@@ -240,6 +278,7 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 		::fputs(sMessage.c_str(), localSocketStream);
 		::fflush(localSocketStream);
 	}
+
 	return 0;
 }
 
@@ -280,7 +319,16 @@ int flop_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 	for(int i = 0; i < 3; i++)
 		sharedCards.push_back(basicInfo.flopCards[i]);
 
-	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);		
+	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);
+
+#ifdef DEBUG
+	printMessage(message);
+	cout << "flop_msg_handle: " << endl;
+	for(int i = 0; i < 3; i++)
+		(basicInfo.flopCards[i]).print();
+	cout << "currentBettingRound: " << basicInfo.currentBettingRound << endl;
+	printHandStrength(basicInfo.handStrength);
+#endif
 	return 0;
 }
 
@@ -311,6 +359,13 @@ int turn_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 
 	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);		
 
+#ifdef DEBUG
+	printMessage(message);
+	cout << "turn_msg_handle: " << endl;
+	(basicInfo.turnCard).print();
+	cout << "currentBettingRound: " << basicInfo.currentBettingRound << endl;
+	printHandStrength(basicInfo.handStrength);
+#endif
 	return 0;
 }
 
@@ -341,27 +396,44 @@ int river_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 	sharedCards.push_back(basicInfo.riverCard);
 
 	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);		
-
-
+#ifdef DEBUG
+	printMessage(message);
+	cout << "river_msg_handle: " << endl;
+	(basicInfo.riverCard).print();
+	cout << "currentBettingRound: " << basicInfo.currentBettingRound << endl;
+	printHandStrength(basicInfo.handStrength);
+#endif
 	return 0;
 }
 
 int showdown_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
+#ifdef DEBUG
+	printMessage(message);
+#endif
 	return 0;
 }
 
 int pot_win_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
+#ifdef DEBUG
+	printMessage(message);
+#endif
 	return 0;
 }
 
 int game_over_msg_handle(vector<string>& message)
 {
+#ifdef DEBUG
+	printMessage(message);
+#endif
 	return 0;
 }
 
 int notify_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
+#ifdef DEBUG
+	printMessage(message);
+#endif
 	return 0;
 }
