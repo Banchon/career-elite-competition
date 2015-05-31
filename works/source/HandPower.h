@@ -4,7 +4,6 @@
 #include "Card.h"
 #include <vector>
 #include "texasHoldem.h"
-//#include <algorithm>
 
 
 class HandPower {

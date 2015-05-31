@@ -4,6 +4,9 @@
 #include "texasHoldem.h"
 #include "Card.h"
 #include <map>
+#include "billChenValueEvaluator.h"
+#include "HandStrengthEvaluator.h"
+#include "decision.h"
 
 #ifdef DEBUG
 #include <iostream>
@@ -15,84 +18,105 @@ using std::string;
 using std::vector;
 using std::map;
 
-int freshPlayersState(vector<string>& message, map<string, Action>& playerStates) {
+int freshLastPlayersAction(vector<string>& inquireMessage, map<string, Action>& lastPlayersAction) 
+{
 	//fresh the players state.
-}
-
-double billChenValue(int hold_cards[][2])
-{
-	double value = 0.0;
-
-	if(hold_cards[0][1] < hold_cards[1][1]) {
-		int temp_color = hold_cards[0][0];
-		int temp_point = hold_cards[0][1];
-		hold_cards[0][0] = hold_cards[1][0];
-		hold_cards[0][1] = hold_cards[1][1];
-		hold_cards[1][0] = temp_color;
-		hold_cards[1][1] = temp_point;
-	}
-
-	if(hold_cards[0][1] <= 10)
-		value = (double)hold_cards[0][1] / 2;
-	else if(hold_cards[0][1] == 14)
-		value = 10;
-	else if(hold_cards[0][1] == 13)
-		value = 8;
-	else if(hold_cards[0][1] == 12)
-		value = 7;
-	else if(hold_cards[0][1] == 11)
-		value = 6;
-
-	if(hold_cards[0][1] == hold_cards[1][1]) {
-		value *= 2;
-
-		if(value < 5)
-			value = 5;
-	}
-
-	//check for suits.
-	if(hold_cards[0][0] == hold_cards[1][0]) {
-		value += 2;
-	}
-
-	int difference = hold_cards[0][1] - hold_cards[1][1];
-
-	if(difference == 0) {
-		//do nothing.
-	}
-	else if(difference == 1) {
-		value += 1;
-	}
-	else if(difference == 2) {
-		value -= 1;
-	}
-	else if(difference == 3) {
-		value -= 2;
-	}
-	else if(difference == 4) {
-		value -= 4;
-	}
-	else {
-		value -= 5;
-	}
-
-	return value;
-}
-
-int seat_info_msg_handle(vector<string>& message, BasicInfo& basic_info)
-{
-	string pid = basic_info.pid;
-	basic_info.total_player = message.size() - 2;
-	basic_info.action_state = 0;
-
-	for(vector<string>::size_type i = 0; i < message.size(); i++) {
+	for(vector<string>::size_type i = 1; i < (inquireMessage.size() - 2); i++) {
+		string pid;
+		string::size_type pid_index = 0;
+		string::size_type pid_end = inquireMessage[i].find(" ");
+		pid = inquireMessage[i].substr(pid_index, pid_end - pid_index);
 		
-		string::size_type pid_index = message[i].find(pid);
+		string strAction;
+		string::size_type strAction_end = inquireMessage[i].rfind(" ");
+		string::size_type strAction_index = inquireMessage[i].rfind(" ", strAction_end - 1) + 1;
+		strAction = inquireMessage[i].substr(strAction_index, strAction_end - strAction_index);
 
-		if(pid_index != string::npos && ( pid_index == 0
-			|| (pid_index == message[i].find(":") + 2))) {
-			
-			basic_info.seat = i - 1;
+		Action action;
+		if(strAction == "FOLD")
+			action = FOLD;
+		else if(strAction == "BLIND")
+			action = BLIND;
+		else if(strAction == "CHECK")
+			action = CHECK;
+		else if(strAction == "CALL")
+			action = CALL;
+		else if(strAction  == "RAISE")
+			action = RAISE;
+		else if(strAction == "ALL_IN")
+			action = ALL_IN;
+		else
+			action = NULLACTION;
+
+		lastPlayersAction[pid] = action;
+	}
+	
+	return 0;
+}
+
+int getCurrentPlayerNum(map<string, Action>& lastPlayersAction) 
+{
+	int currentPlayerNum = 0;
+	for(map<string, Action>::iterator it = lastPlayersAction.begin(); it != lastPlayersAction.end(); it++) {
+		if(it->second != FOLD && it->second != NULLACTION)
+			currentPlayerNum++;
+	}
+
+	return currentPlayerNum;
+}
+
+int getRaisePlayerNum(map<string, Action>& lastPlayersAction)
+{
+	int raisePlayerNum = 0;
+
+	for(map<string, Action>::iterator it = lastPlayersAction.begin(); it != lastPlayersAction.end(); it++) {
+		if(it->second == RAISE || it->second == ALL_IN)
+			raisePlayerNum++;
+	}
+
+	return raisePlayerNum;
+}
+
+
+int seat_info_msg_handle(vector<string>& message, BasicInfo& basicInfo)
+{
+	Card nullCard;
+	map<string, Action> nullMap;
+	string selfpid = basicInfo.pid;
+
+	basicInfo.currentBettingRound = PRE_FLOP;
+	basicInfo.lastSelfAction = NULLACTION;
+	basicInfo.holeCards[0] = nullCard;
+	basicInfo.holeCards[1] = nullCard;
+	basicInfo.flopCards[0] = nullCard;
+	basicInfo.flopCards[1] = nullCard;
+	basicInfo.flopCards[2] = nullCard;
+	basicInfo.turnCard = nullCard;
+	basicInfo.riverCard = nullCard;
+	basicInfo.lastPlayersAction = nullMap;
+	basicInfo.billChenValue = 0.0;
+	basicInfo.handStrength.wins = 0;
+	basicInfo.handStrength.ties = 0;
+	basicInfo.handStrength.losses = 1;
+	basicInfo.leastRaiseJetton = 0;
+
+	for(vector<string>::size_type i = 1; i < message.size() - 1; i++) {
+		string pid;
+		string::size_type pid_index = 0;
+
+		string::size_type colon_index = message[i].find(":");
+		if(colon_index != string::npos)
+			pid_index = colon_index + 1;
+
+		string::size_type pid_end = message[i].find(" ", pid_index);
+		pid = message[i].substr(pid_index, pid_end - pid_index);
+		
+		basicInfo.lastPlayersAction[pid] = NULLACTION;
+
+		
+		if(pid == selfpid) {
+
+			basicInfo.seat = i - 1;
 
 			string::size_type jetton_index = message[i].find(" ", pid_index) + 1;
 			string::size_type jetton_end = message[i].find(" ", jetton_index);
@@ -102,40 +126,43 @@ int seat_info_msg_handle(vector<string>& message, BasicInfo& basic_info)
 			string jetton = message[i].substr(jetton_index, jetton_end - jetton_index);
 			string money = message[i].substr(money_index, money_end - money_index);
 
-			basic_info.jetton = std::stoi(jetton);
-			basic_info.money = std::stoi(money);
-#ifdef DEBUG
-			cout << "-----new hand-----" << endl;
-			cout << "total players: " << basic_info.total_player << endl;
-			cout << "jetton: " << basic_info.jetton << endl;
-			cout << "money: " << basic_info.money << endl;
-			cout << jetton << ":jetton.length(): " << jetton.length() << endl;
-			cout << money << ":money.length(): " << money.length() << endl;
-			cout << "------------------" << endl;
-#endif
-
-			return 0;
-		}		
+			basicInfo.jetton = std::stoi(jetton);
+			basicInfo.money = std::stoi(money);
+		}
 	}
 
-	return -1;
+#ifdef DEBUG
+		cout << "-----new hand-----" << endl;
+		cout << "total players: " << basicInfo.total_player << endl;
+		cout << "jetton: " << basicInfo.jetton << endl;
+		cout << "money: " << basicInfo.money << endl;
+		cout << jetton << ":jetton.length(): " << jetton.length() << endl;
+		cout << money << ":money.length(): " << money.length() << endl;
+		cout << "------------------" << endl;
+#endif
+		return 0;
 }
 
-int blind_msg_handle(vector<string>& message, BasicInfo& basic_info)
+
+int blind_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
-	/*
-	if(basic_info.seat == 1)
-		basic_info.jetton -= 50;
-	if(basic_info.seat == 2)
-		basic_info.jetton -= 100;
-	*/
+	for(vector<string>::size_type i = 1; i < message.size() - 1; i++) {
+		string blind;
+		string::size_type blind_index = message[i].find(" ") + 1;
+		string::size_type blind_end = message[i].find(" ", blind_index);
+
+		blind = message[i].substr(blind_index, blind_end - blind_end);
+
+		int blindBet = std::stoi(blind);
+		if(basicInfo.leastRaiseJetton < blindBet)
+			basicInfo.leastRaiseJetton = blindBet;
+	}
 	return 0;
 }
 
-int hold_cards_msg_handle(vector<string>& message, BasicInfo& basic_info)
-{
-	basic_info.phase = 0;
 
+int hold_cards_msg_handle(vector<string>& message, BasicInfo& basicInfo)
+{
 	string::size_type color_1_end = message[1].find(" ");
 	string::size_type color_2_end = message[2].find(" ");
 	string::size_type point_1_index = color_1_end + 1;
@@ -149,12 +176,10 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string color_2 = message[2].substr(0, color_2_end - 0);
 	string point_2 = message[2].substr(point_2_index, point_2_end - point_2_index);
 
-	basic_info.hold_cards[0][0] = str_to_color(color_1);
-	basic_info.hold_cards[1][0] = str_to_color(color_2);
-	basic_info.hold_cards[0][1] = str_to_point(point_1);
-	basic_info.hold_cards[1][1] = str_to_point(point_2);
+	basicInfo.holeCards[0] = Card(str_to_color(color_1), str_to_point(point_1));
+	basicInfo.holeCards[1] = Card(str_to_color(color_2), str_to_point(point_2));
 
-	basic_info.hold_cards_value = billChenValue(basic_info.hold_cards);
+	basicInfo.billChenValue = billChenValueEvaluator(basicInfo.holeCards);
 
 #ifdef DEBUG
 	cout << "-----hold_cards_msg_handle-----" << endl;
@@ -162,69 +187,65 @@ int hold_cards_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	cout << color_1 << " " << point_1 << " " << point_1.length() << endl;
 	cout << color_2 << " " << point_2 << " " << point_2.length() << endl;
 	cout << "hand cards after processed: " << endl;
-	cout << basic_info.hold_cards[0][0] << " " << basic_info.hold_cards[0][1] << endl;
-	cout << basic_info.hold_cards[1][0] << " " << basic_info.hold_cards[1][1] << endl;
-	cout << "hold_cards_value: " << basic_info.hold_cards_value << endl;
+	cout << basicInfo.hold_cards[0][0] << " " << basicInfo.hold_cards[0][1] << endl;
+	cout << basicInfo.hold_cards[1][0] << " " << basicInfo.hold_cards[1][1] << endl;
+	cout << "hold_cards_value: " << basicInfo.hold_cards_value << endl;
 	cout << "-------------------------------" << endl;
 #endif
 	return 0;
 }
 
-//more argument needed to perform better action.
-//below are extremely stupid all-in method
-int inquire_msg_handle(vector<string>& message, BasicInfo& basic_info, FILE *localSocketStream)
+int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *localSocketStream)
 {
-	if(basic_info.action_state == 0) {
-		if(basic_info.phase == 0) {  //pre-flop
-			 if(basic_info.hold_cards_value < 8) {
-			 	const string fold = "fold \n";
-			 	::fputs(fold.c_str(), localSocketStream);
-			 	::fflush(localSocketStream);
-			 	basic_info.action_state = 2;
-			 }
-			 else {
-			 	const string call = "call \n";
-			 	::fputs(call.c_str(), localSocketStream);
-			 	::fflush(localSocketStream);
-			 }
 
-		}
-		else if(basic_info.phase == 1) { //flop
-			const string call = "call \n";
-			::fputs(call.c_str(), localSocketStream);
-			::fflush(localSocketStream);
+	freshLastPlayersAction(message, basicInfo.lastPlayersAction);
+	map<string, Action>::iterator it = (basicInfo.lastPlayersAction).find(basicInfo.pid);
+	if(it != (basicInfo.lastPlayersAction).end())
+		basicInfo.lastSelfAction = it->second;
 
-		}
-		else if(basic_info.phase == 2) { //turn
-			const string call = "call \n";
-			::fputs(call.c_str(), localSocketStream);
-			::fflush(localSocketStream);
-
-		}
-		else if(basic_info.phase == 3) { //river
-			const string call = "call \n";
-			::fputs(call.c_str(), localSocketStream);
-			::fflush(localSocketStream);
-		}
+	//send a message when last action is neither ALL_IN or FOLD
+	if((basicInfo.lastSelfAction != ALL_IN)  && (basicInfo.lastSelfAction != FOLD)) {
+		BettingDecision bettingDecision;
+		
+		//pre_flop decision
+		if(basicInfo.currentBettingRound == PRE_FLOP)
+			bettingDecision = decidePreFlop(basicInfo.billChenValue, basicInfo.lastSelfAction);
+		
+		//After flop decision
 		else {
-
+			
+			int currentPlayerNum = getCurrentPlayerNum(basicInfo.lastPlayersAction);
+			int raisePlayerNum = getRaisePlayerNum(basicInfo.lastPlayersAction);
+			bool isRiverRound = (basicInfo.currentBettingRound == RIVER);
+			bettingDecision = decideAfterFlop(basicInfo.handStrength, currentPlayerNum, raisePlayerNum, isRiverRound);
 		}
-	}
-	else if(basic_info.action_state == 1) { //all-in
+		
+		string sMessage;
+		switch(bettingDecision) {
+			case FOLD_DECISION:
+				sMessage = "fold \n";
+				break;
+			case CALL_DECISION:
+				sMessage = "call \n";
+				break;
+			case RAISE_DECISION:
+				sMessage = "raise ";
+				sMessage.append(std::to_string(basicInfo.leastRaiseJetton));
+				sMessage.append(" \n");
+				break;
+			default:
+				break;
+		}
 
+		::fputs(sMessage.c_str(), localSocketStream);
+		::fflush(localSocketStream);
 	}
-	else if(basic_info.action_state == 2) { //fold
-	}
-	else {
-
-	}
-
 	return 0;
 }
 
-int flop_msg_handle(vector<string>& message, BasicInfo& basic_info)
+int flop_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
-	basic_info.phase = 1;
+	basicInfo.currentBettingRound = FLOP;
 	
 	string::size_type color_1_end = message[1].find(" ");
 	string::size_type color_2_end = message[2].find(" ");
@@ -247,20 +268,25 @@ int flop_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string color_3 = message[3].substr(0, color_3_end - 0);
 	string point_3 = message[3].substr(point_3_index, point_3_end - point_3_index);
 
-	basic_info.flop_cards[0][0] = str_to_color(color_1);
-	basic_info.flop_cards[1][0] = str_to_color(color_2);
-	basic_info.flop_cards[2][0] = str_to_color(color_3);
+	basicInfo.flopCards[0] = Card(str_to_color(color_1), str_to_point(point_1));
+	basicInfo.flopCards[1] = Card(str_to_color(color_2), str_to_point(point_2));
+	basicInfo.flopCards[2] = Card(str_to_color(color_3), str_to_point(point_3));
 
-	basic_info.flop_cards[0][1] = str_to_point(point_1);
-	basic_info.flop_cards[1][1] = str_to_point(point_2);
-	basic_info.flop_cards[2][1] = str_to_point(point_3);
+	//evalute HandStrength
+	vector<Card> holeCards;
+	for(int i = 0; i < 2; i++)
+		holeCards.push_back(basicInfo.holeCards[i]);
+	vector<Card> sharedCards;
+	for(int i = 0; i < 3; i++)
+		sharedCards.push_back(basicInfo.flopCards[i]);
 
+	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);		
 	return 0;
 }
 
-int turn_msg_handle(vector<string>& message, BasicInfo& basic_info)
+int turn_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
-	basic_info.phase = 2;
+	basicInfo.currentBettingRound = TURN;
 
 	string::size_type color_1_end = message[1].find(" ");
 
@@ -270,15 +296,27 @@ int turn_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string color_1 = message[1].substr(0, color_1_end - 0);
 	string point_1 = message[1].substr(point_1_index, point_1_end - point_1_index);
 
-	basic_info.turn_cards[0] = str_to_color(color_1);
-	basic_info.turn_cards[1] = str_to_point(point_1);
+	basicInfo.turnCard = Card(str_to_color(color_1), str_to_point(point_1));
+
+	//evaluate HandStrength
+	vector<Card> holeCards;
+	for(int i = 0; i < 2; i++)
+		holeCards.push_back(basicInfo.holeCards[i]);
+
+	vector<Card> sharedCards;
+	for(int i = 0; i < 3; i++)
+		sharedCards.push_back(basicInfo.flopCards[i]);
+
+	sharedCards.push_back(basicInfo.turnCard);
+
+	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);		
 
 	return 0;
 }
 
-int river_msg_handle(vector<string>& message, BasicInfo& basic_info)
+int river_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
-	basic_info.phase = 3;
+	basicInfo.currentBettingRound = RIVER;
 
 	string::size_type color_1_end = message[1].find(" ");
 
@@ -288,19 +326,32 @@ int river_msg_handle(vector<string>& message, BasicInfo& basic_info)
 	string color_1 = message[1].substr(0, color_1_end - 0);
 	string point_1 = message[1].substr(point_1_index, point_1_end - point_1_index);
 
-	basic_info.river_cards[0] = str_to_color(color_1);
-	basic_info.river_cards[1] = str_to_point(point_1);
+	basicInfo.riverCard = Card(str_to_color(color_1), str_to_point(point_1));
 	
+	//evaluate HandStrength
+	vector<Card> holeCards;
+	for(int i = 0; i < 2; i++)
+		holeCards.push_back(basicInfo.holeCards[i]);
+
+	vector<Card> sharedCards;
+	for(int i = 0; i < 3; i++)
+		sharedCards.push_back(basicInfo.flopCards[i]);
+
+	sharedCards.push_back(basicInfo.turnCard);
+	sharedCards.push_back(basicInfo.riverCard);
+
+	basicInfo.handStrength = HandStrengthEvaluator(holeCards, sharedCards);		
+
+
 	return 0;
 }
 
-int showdown_msg_handle(vector<string>& message, BasicInfo& basic_info)
+int showdown_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
-	basic_info.phase = -1;
 	return 0;
 }
 
-int pot_win_msg_handle(vector<string>& message, BasicInfo& basic_info)
+int pot_win_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
 	return 0;
 }
@@ -310,7 +361,7 @@ int game_over_msg_handle(vector<string>& message)
 	return 0;
 }
 
-int notify_msg_handle(vector<string>& message, BasicInfo& basic_info)
+int notify_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 {
 	return 0;
 }

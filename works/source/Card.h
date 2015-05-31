@@ -40,6 +40,11 @@ class Card {
 		Point point;
 
 	public:
+		Card() 
+		{
+			color = NULLCOLOR;
+			point = NULLPOINT;
+		}
 		Card(Color cl, Point pt)
 		{
 			color = cl;

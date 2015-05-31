@@ -1,24 +1,12 @@
 #ifndef DECISION_H
 #define DECISION_H
 
-#include "HandPower.h"
 #include <vector>
-#include "Card.h"
 #include "texasHoldem.h"
 
-typedef struct HandStrength {
-	int wins;
-	int losses;
-	int ties;
-}HandStrength;
 
-HandStrength HandStrengthEvaluator(HandPower hp, std::vector<Card> playerHoleCards, std::vector<Card> sharedCards);
+BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raisePlayerNum, bool isRiverRound);
 
-
-double calculateHandStrength(HandStrength hs, int numberOfPlayers);
-
-
-BettingDecision decideAfterFlop(std::vector<Card> playerHoleCards, std::vector<Card> sharedCards, int numberOfPlayers, bool isRiverRound);
-
+BettingDecision decidePreFlop(double billChenValue, Action lastAction);
 
 #endif
