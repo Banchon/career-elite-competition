@@ -4,7 +4,7 @@
 
 using std::vector;
 
-#ifdef TEST
+#ifdef DEBUG
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -17,10 +17,10 @@ BettingDecision decidePreFlop(double billChenValue, int currentPlayerNum, int la
 
 	//be careful if the lastRoundBetIncrement is very big.
 	if(lastRoundBetIncrement >= 500)
-		billChenValue -= 6;
+		billChenValue -= 2;
 	//be careful of currentPlayerNum
 	if(currentPlayerNum > 3)
-		billChenValue -= 2;
+		billChenValue -= 1;
 
 
 	if(billChenValue >= 9)
@@ -38,15 +38,11 @@ BettingDecision decidePreFlop(double billChenValue, int currentPlayerNum, int la
 
 BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raisePlayerNum, int lastRoundBetIncrement, bool isRiverRound)
 {
+	BettingDecision bettingDecision;
 	double num = hs.wins + 0.5 * hs.ties;
 	double den = hs.wins + hs.losses + hs.ties;
 
 	double p = std::pow(num / den, numberOfPlayers);
-
-#ifdef TEST
-	cout << "first p: " << p << endl;
-	cout << "numberOfPlayers: " << numberOfPlayers << endl;
-#endif
 
 	//Decision must depends on the number of players
 	
@@ -64,15 +60,14 @@ BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raiseP
 	//lastRoundBetIncrement too high, be careful
 	if(lastRoundBetIncrement >= 500)
 		p -= 0.1;
-	
-#ifdef TEST
-	cout << "second p: " << p << endl;
-#endif
+
 	
 	if (p > 0.8)
-		return RAISE_DECISION;
+		bettingDecision =  RAISE_DECISION;
 	else if(p > 0.4)
-		return CALL_DECISION;
+		bettingDecision = CALL_DECISION;
 	else
-		return FOLD_DECISION;
+		bettingDecision = FOLD_DECISION;
+
+	return bettingDecision;
 }

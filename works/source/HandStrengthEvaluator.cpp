@@ -8,6 +8,12 @@
 
 using std::vector;
 
+#ifdef DEBUG
+#include <iostream>
+using std::endl;
+using std::cout;
+#endif
+
 HandStrength HandStrengthEvaluator(vector<Card> playerHoleCards, vector<Card> sharedCards)
 {
 	HandStrength handStrength;
@@ -29,6 +35,11 @@ HandStrength HandStrengthEvaluator(vector<Card> playerHoleCards, vector<Card> sh
 	}
 
 	HandPower playerRank = HandPowerRank(playerCards);
+#ifdef DEBUG
+	cout << "handPower: " << endl;
+	playerRank.print();
+#endif
+
 
 	vector<vector<Card> > couplesOfCard = deck.fromDeckToCouplesOfCard();
 

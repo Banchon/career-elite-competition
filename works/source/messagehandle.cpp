@@ -320,6 +320,13 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 
 		::fputs(sMessage.c_str(), localSocketStream);
 		::fflush(localSocketStream);
+#ifdef DEBUG
+		cout << "currentPlayerNum: " << currentPlayerNum << endl;
+		cout << "raisePlayerNum: " << raisePlayerNum << endl;
+		cout << "lastRoundBetIncrement: " << lastRoundBetIncrement << endl;
+		cout << "isRiverRound: " << isRiverRound << endl;
+		cout << "bettingDecision: " << bettingDecision << endl;
+#endif
 	}
 
 	return 0;

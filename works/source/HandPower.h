@@ -4,6 +4,7 @@
 #include "Card.h"
 #include <vector>
 #include "texasHoldem.h"
+#include <iostream>
 
 
 class HandPower {
@@ -41,5 +42,13 @@ public:
 		}
 		return typeDifference;
 	}
+	void print()
+	{
+		std::cout << "HandPowerType: " << handPowerType << std::endl;
+		std::cout << "tieBreakingInformation: ";
+		for(std::vector<Point>::iterator it = tieBreakingInformation.begin(); it != tieBreakingInformation.end(); it++)
+			std::cout << *it << " ";
+		std::cout << std::endl;
+	}		
 };
 #endif
