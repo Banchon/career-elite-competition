@@ -15,14 +15,21 @@ BettingDecision decidePreFlop(double billChenValue, int currentPlayerNum, int la
 {
 	BettingDecision bettingDecision;
 
+	//if total player is less than 3, be more aggresive
+	if(currentPlayerNum <= 2) {
+		billChenValue += 3;
+	}
+	else if(currentPlayerNum <= 3) {
+		billChenValue += 2;
+	}
+	else {
+
+	}
+
 	//be careful if the lastRoundBetIncrement is very big.
-	if(lastRoundBetIncrement >= 500)
+	if(lastRoundBetIncrement >= 1000)
 		billChenValue -= 2;
-	//be careful of currentPlayerNum
-	if(currentPlayerNum > 3)
-		billChenValue -= 1;
-
-
+	
 	if(billChenValue >= 9)
 		bettingDecision = RAISE_DECISION;
 	else if(billChenValue >= 6)
@@ -58,7 +65,7 @@ BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raiseP
 		p -= 0.3;
 
 	//lastRoundBetIncrement too high, be careful
-	if(lastRoundBetIncrement >= 500)
+	if(lastRoundBetIncrement >= 1000)
 		p -= 0.1;
 
 	

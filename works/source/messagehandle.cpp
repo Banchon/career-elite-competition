@@ -124,7 +124,7 @@ int getCurrentPlayerNum(map<string, Action>& lastPlayersAction)
 {
 	int currentPlayerNum = 0;
 	for(map<string, Action>::iterator it = lastPlayersAction.begin(); it != lastPlayersAction.end(); it++) {
-		if(it->second != FOLD && it->second != NULLACTION)
+		if(it->second != FOLD)
 			currentPlayerNum++;
 	}
 
