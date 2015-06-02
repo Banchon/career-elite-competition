@@ -5,9 +5,9 @@
 #include "texasHoldem.h"
 
 
-BettingDecision decidePreFlop(double billChenValue, int currentPlayerNum, int lastRoundBetIncrement);
+BettingDecision decidePreFlop(double billChenValue, int totalPlayerNum, int currentPlayerNum, int lastRoundBetIncrement, int lastRoundSelfBet);
 
 
-BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raisePlayerNum, int lastRoundBetIncrement, bool isRiverRound);
+BettingDecision decideAfterFlop(HandStrength hs, int totalPlayerNum, int numberOfPlayers, int raisePlayerNum, int lastRoundBetIncrement, int lastRoundSelfBet, bool isRiverRound);
 
 #endif

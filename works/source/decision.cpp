@@ -11,24 +11,35 @@ using std::endl;
 #endif
 
 
-BettingDecision decidePreFlop(double billChenValue, int currentPlayerNum, int lastRoundBetIncrement)
+BettingDecision decidePreFlop(double billChenValue, int totalPlayerNum, int currentPlayerNum, int lastRoundBetIncrement, int lastRoundSelfBet)
 {
 	BettingDecision bettingDecision;
+	if(lastRoundSelfBet <= 400) {
 
-	//if total player is less than 3, be more aggresive
-	if(currentPlayerNum <= 2) {
-		billChenValue += 3;
 	}
-	else if(currentPlayerNum <= 3) {
-		billChenValue += 2;
+	else if(lastRoundSelfBet <= 600) {
+		billChenValue -= 1;
+	}
+	else if(lastRoundSelfBet <= 800) {
+		billChenValue -= 2;
+	}
+	else if(lastRoundSelfBet <= 1000) {
+		billChenValue -= 3;
 	}
 	else {
-
+		billChenValue -= 4;
 	}
 
+	//if total player num less than 3, be more aggresive
+	if(totalPlayerNum <= 3)
+		billChenValue += 2;
+
 	//be careful if the lastRoundBetIncrement is very big.
-	if(lastRoundBetIncrement >= 1000)
-		billChenValue -= 2;
+	if(lastRoundBetIncrement >= 1000) {
+		billChenValue -= 1;
+		if(currentPlayerNum > 3)
+			billChenValue -= 3;
+	}
 	
 	if(billChenValue >= 9)
 		bettingDecision = RAISE_DECISION;
@@ -43,7 +54,7 @@ BettingDecision decidePreFlop(double billChenValue, int currentPlayerNum, int la
 
 
 
-BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raisePlayerNum, int lastRoundBetIncrement, bool isRiverRound)
+BettingDecision decideAfterFlop(HandStrength hs, int totalPlayerNum, int numberOfPlayers, int raisePlayerNum, int lastRoundBetIncrement, int lastRoundSelfBet, bool isRiverRound)
 {
 	BettingDecision bettingDecision;
 	double num = hs.wins + 0.5 * hs.ties;
@@ -67,6 +78,25 @@ BettingDecision decideAfterFlop(HandStrength hs, int numberOfPlayers, int raiseP
 	//lastRoundBetIncrement too high, be careful
 	if(lastRoundBetIncrement >= 1000)
 		p -= 0.1;
+	//be careful when bet too many
+	if(lastRoundSelfBet <= 600) {
+
+	}
+	else if(lastRoundSelfBet <= 900) {
+		p -= 0.1;
+	}
+	else if(lastRoundSelfBet <= 1200) {
+		p -= 0.2;
+	}
+	else {
+		p -= 0.3;
+	}
+	
+	
+	if(totalPlayerNum <= 3 )
+		p += 0.2;
+
+
 
 	
 	if (p > 0.8)

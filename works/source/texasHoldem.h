@@ -52,6 +52,7 @@ enum BettingRound {
 typedef struct BasicInfo {
 	std::string pid;
 	int seat;    //0 stands for button, 1 stands for small blind, 2 stands for big blind .... -1 stands for nothing;
+	unsigned totalPlayerNum;
 	BettingRound currentBettingRound;
 	Action lastSelfAction;
 	int jetton; //current jetton.

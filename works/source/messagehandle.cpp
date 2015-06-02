@@ -118,6 +118,36 @@ int getLastRoundBetIncrement(vector<string>& inquireMessage, const string selfpi
 	else
 		return biggestBet;
 }
+
+int getLastRoundSelfBet(vector<string>& inquireMessage, const string selfpid)
+{
+	int lastSelfBet = 0;
+	for(vector<string>::size_type i = 1; i < (inquireMessage.size() - 2); i++) {
+		string pid;
+		string::size_type pid_index = 0;
+		string::size_type pid_end = inquireMessage[i].find(" ", pid_index);
+
+		pid = inquireMessage[i].substr(pid_index, pid_end - pid_index);
+
+		if(pid == selfpid) {
+			string bet;
+		//find the bet index
+			string::size_type bet_index = 0;
+			for(int j = 0; j < 3; j++)
+				bet_index = inquireMessage[i].find(" ", bet_index) + 1;
+		//find the bet end
+			string::size_type bet_end = inquireMessage[i].find(" ", bet_index);
+
+			bet = inquireMessage[i].substr(bet_index, bet_end - bet_index);
+
+			int betNum = std::stoi(bet);
+			lastSelfBet = betNum;
+
+		}
+	}
+
+	return lastSelfBet;
+}
 	
 
 int getCurrentPlayerNum(map<string, Action>& lastPlayersAction) 
@@ -197,6 +227,8 @@ int seat_info_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 		}
 	}
 
+	basicInfo.totalPlayerNum = basicInfo.lastPlayersAction.size();
+
 #ifdef DEBUG
 		cout << endl;
 		cout << endl;
@@ -204,6 +236,7 @@ int seat_info_msg_handle(vector<string>& message, BasicInfo& basicInfo)
 		printMessage(message);
 		cout << "seat_info_msg_handle: " << endl;
 		printLastPlayersAction(basicInfo.lastPlayersAction);
+		cout << "totalPlayerNum: " << basicInfo.totalPlayerNum << endl;
 		cout << "seat: " << basicInfo.seat << endl;
 		cout << "jetton: " << basicInfo.jetton << endl;
 		cout << "money: " << basicInfo.money << endl;
@@ -285,6 +318,7 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 	if((basicInfo.lastSelfAction != ALL_IN)  && (basicInfo.lastSelfAction != FOLD)) {
 
 		int lastRoundBetIncrement = getLastRoundBetIncrement(message, basicInfo.pid);
+		int lastRoundSelfBet = getLastRoundSelfBet(message, basicInfo.pid);
 		int currentPlayerNum = getCurrentPlayerNum(basicInfo.lastPlayersAction);
 		int raisePlayerNum = getRaisePlayerNum(basicInfo.lastPlayersAction);
 		bool isRiverRound = (basicInfo.currentBettingRound == RIVER);
@@ -293,12 +327,12 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 		
 		//pre_flop decision
 		if(basicInfo.currentBettingRound == PRE_FLOP)
-			bettingDecision = decidePreFlop(basicInfo.billChenValue, currentPlayerNum, lastRoundBetIncrement);
+			bettingDecision = decidePreFlop(basicInfo.billChenValue, basicInfo.totalPlayerNum, currentPlayerNum, lastRoundBetIncrement, lastRoundSelfBet);
 		
 		//After flop decision
 		else {
 			
-			bettingDecision = decideAfterFlop(basicInfo.handStrength, currentPlayerNum, raisePlayerNum, lastRoundBetIncrement, isRiverRound);
+			bettingDecision = decideAfterFlop(basicInfo.handStrength, basicInfo.totalPlayerNum, currentPlayerNum, raisePlayerNum, lastRoundBetIncrement, lastRoundSelfBet, isRiverRound);
 		}
 		
 		string sMessage;
@@ -324,6 +358,7 @@ int inquire_msg_handle(vector<string>& message, BasicInfo& basicInfo, FILE *loca
 		cout << "currentPlayerNum: " << currentPlayerNum << endl;
 		cout << "raisePlayerNum: " << raisePlayerNum << endl;
 		cout << "lastRoundBetIncrement: " << lastRoundBetIncrement << endl;
+		cout << "lastRoundSelfBet: " << lastRoundSelfBet << endl;
 		cout << "isRiverRound: " << isRiverRound << endl;
 		cout << "bettingDecision: " << bettingDecision << endl;
 #endif
